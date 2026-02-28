@@ -1,0 +1,80 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade Entry Form</title>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js"></script>
+    
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f4; }
+        form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        label { display: block; margin-top: 10px; }
+        input { width: 100%; padding: 8px; margin-top: 5px; }
+        button { margin-top: 20px; padding: 10px 15px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h2>Trade Entry Form</h2>
+    <form id="tradeForm">
+        <label for="pair">Currency Pair:</label>
+        <input type="text" id="pair" name="pair" required>
+        
+        <label for="entry">Entry Point:</label>
+        <input type="number" step="any" id="entry" name="entry" required>
+        
+        <label for="stopLoss">Stop Loss:</label>
+        <input type="number" step="any" id="stopLoss" name="stopLoss" required>
+        
+        <label for="takeProfit">Take Profit:</label>
+        <input type="number" step="any" id="takeProfit" name="takeProfit" required>
+        
+        <label for="size">Trade Size (Lots):</label>
+        <input type="number" step="any" id="size" name="size" required>
+        
+        <button type="submit">Submit Trade</button>
+    </form>
+
+    <script>
+        // Your Firebase configuration (replace with your own keys)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Handle form submission
+        document.getElementById('tradeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = {
+                pair: document.getElementById('pair').value,
+                entry: parseFloat(document.getElementById('entry').value),
+                stopLoss: parseFloat(document.getElementById('stopLoss').value),
+                takeProfit: parseFloat(document.getElementById('takeProfit').value),
+                size: parseFloat(document.getElementById('size').value),
+                timestamp: new Date()
+            };
+
+            db.collection("trades").add(formData)
+                .then(() => {
+                    alert('Trade successfully saved!');
+                    tradeForm.reset();
+                })
+                .catch(error => {
+                    console.error("Error adding trade: ", error);
+                });
+        });
+    </script>
+</body>
+</html>
